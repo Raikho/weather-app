@@ -12,7 +12,7 @@ export default  class UrlGen {
         }
         this.keyPairs.push({key, value});
     }
-    getUrl() {
+    get url() {
         let out = this.baseUrl;
         for (let i = 0; i < this.keyPairs.length; i++) {
             let key = this.keyPairs[i].key;
