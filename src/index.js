@@ -8,12 +8,15 @@ const weatherBaseUrl = 'https://api.openweathermap.org/data/2.5/weather';
 // ========================== SETUP ===================================
 let weatherUrl = new UrlGen(weatherBaseUrl);
 weatherUrl.addKey('appid', weatherKey);
-let city = '';
+let state = {
+    city: 'New York City',
+    temp: null,
+};
 
 function setCity(name) {
-    city = name;
+    state.city = name;
     const cityNode = document.querySelector('.city');
-    cityNode.textContent = city;
+    cityNode.textContent = state.city;
 }
 
 async function getData() {
@@ -24,14 +27,22 @@ async function getData() {
 }
 
 function setData(data) {
-    let temp = Math.round(Number(data.main.temp));
-    console.log('main temp: ', temp);
-    const tempNode = document.querySelector('.temp');
-    tempNode.textContent = temp.toString() + '°F';
+    state.temp = Math.round((Number(data.main.temp) - 273) * 1.8 + 32);
+    state.city = data.name;
+    writeData(data);
 }
+
+function writeData(data) {
+    const tempNode = document.querySelector('.temp');
+    const cityNode = document.querySelector('.city');
+
+    tempNode.textContent = state.temp.toString() + '°F';
+    cityNode.textContent = state.city;
+}
+
 // =========================== INIT ===================================
 setCity('New York City');
-weatherUrl.addKey('q', city);
+weatherUrl.addKey('q', state.city);
 const weatherData = getData();
 
 
