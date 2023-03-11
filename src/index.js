@@ -17,6 +17,11 @@ let state = {
     windSpeed: null, // meter/sec
     clouds: null, // % coverage
     desc: 'empty',
+
+    printTemp() {return this.temp.toString() + '°F';},
+    printFeelsLike() {return 'feels like ' + this.feelsLike.toString() + '°F';},
+    printClouds() {return 'cloud coverage: ' + this.clouds + '%'},
+    printWind() {return this.windSpeed + ' mph';},
 };
 
 document.getElementById('search-button').addEventListener('click', async () => {
@@ -61,16 +66,16 @@ function writeWeatherState() {
     const descNode = document.querySelector('.desc');
     const cityNode = document.querySelector('.city');
 
-    tempNode.textContent = state.temp.toString() + '°F';
-    feelsLikeNode.textContent = 'feels like ' + state.feelsLike.toString() + '°F';
-    cloudsNode.textContent = 'cloud coverage: ' + state.clouds + '%';
-    windNode.textContent = state.windSpeed + ' mph';
+    tempNode.textContent = state.printTemp();
+    feelsLikeNode.textContent = state.printFeelsLike();
+    cloudsNode.textContent = state.printClouds();
+    windNode.textContent = state.printWind();
     descNode.textContent = state.desc;
     cityNode.textContent = state.city;
 }
 
 // =========================== INIT ===================================
-queryCity('Austin');
+queryCity('Frederica');
 
 
 
