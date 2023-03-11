@@ -3,8 +3,49 @@
 }
 
 body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+
     background-color: slategray;
     color: whitesmoke;
     font-family: helvetica, sans-serif;
     font-size: 18px;
+
+    display: grid;
+    grid-template-rows: 1fr 9fr;
+}
+
+/* ============================ HEADER ============================= */
+#header {
+    border: 1px dotted lightgray;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.city-container {
+    border: 1px dotted lightgray;
+
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+}
+.city-container>* {border: 1px dotted white;}
+
+/* ============================= MAIN ============================== */
+
+#main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.middle-container {
+    border: 1px dotted lightgray;
+    padding: 20px;
+}
+.temp {
+    font-size: 64px;
 }

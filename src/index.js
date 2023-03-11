@@ -7,8 +7,35 @@ const weatherBaseUrl = 'https://api.openweathermap.org/data/2.5/weather';
 
 // ========================== SETUP ===================================
 let weatherUrl = new UrlGen(weatherBaseUrl);
-weatherUrl.addKey('q', 'Los Angeles');
 weatherUrl.addKey('appid', weatherKey);
+let city = '';
+
+function setCity(name) {
+    city = name;
+    const cityNode = document.querySelector('.city');
+    cityNode.textContent = city;
+}
+
+async function getData() {
+    let response = await fetch(weatherUrl.getUrl(), {mode: 'cors'});
+    let json = await response.json();
+    console.log('json: ', json);
+    setData(json);
+}
+
+function setData(data) {
+    let temp = Math.round(Number(data.main.temp));
+    console.log('main temp: ', temp);
+    const tempNode = document.querySelector('.temp');
+    tempNode.textContent = temp.toString() + '°F';
+}
+// =========================== INIT ===================================
+setCity('New York City');
+weatherUrl.addKey('q', city);
+const weatherData = getData();
+
+
+
 
 // ========================== DEBUG ===================================
 console.log(weatherUrl.getUrl(), weatherUrl);
