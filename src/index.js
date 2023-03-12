@@ -34,7 +34,7 @@ let state = {
     printTemp() {return this.temp.toString() + '°F';},
     printFeelsLike() {return 'feels like ' + this.feelsLike.toString() + '°F';},
     printClouds() {return 'cloud coverage: ' + this.clouds + '%'},
-    printWind() {return this.windSpeed + ' mph';},
+    printWind() {return 'wind: ' + this.windSpeed + ' mph';},
 };
 
 document.getElementById('search-button').addEventListener('click', async () => {
@@ -48,6 +48,7 @@ document.getElementById('search-button').addEventListener('click', async () => {
 async function queryCity(cityName) {
     weatherUrl.addKey('q', cityName);
     try {
+        await new Promise(resolve => setTimeout(resolve, 200)); // DEBUG
         let response = await fetch(weatherUrl.url, {mode: 'cors'});
         if (!response.ok)
             throw new Error(response.statusText);
@@ -65,7 +66,6 @@ function updateWeatherState(data) {
     state.temp = Math.round(Number(data.main.temp));
     state.feelsLike = Math.round(Number(data.main.feels_like));
     state.windSpeed = Math.round(data.wind.speed);
-    state.clouds = data.clouds.all;
     state.desc = data.weather[0].description;
     state.city = data.name;
     state.icon = data.weather[0].icon;
@@ -76,14 +76,12 @@ function writeWeatherState() {
     const tempNode = document.querySelector('.temp');
     const feelsLikeNode = document.querySelector('.feels-like');
     const windNode = document.querySelector('.wind');
-    const cloudsNode = document.querySelector('.clouds');
     const descNode = document.querySelector('.desc');
     const cityNode = document.querySelector('.city');
     const imgNode = document.querySelector('img');
 
     tempNode.textContent = state.printTemp();
     feelsLikeNode.textContent = state.printFeelsLike();
-    cloudsNode.textContent = state.printClouds();
     windNode.textContent = state.printWind();
     descNode.textContent = state.desc;
     cityNode.textContent = state.city;

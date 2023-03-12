@@ -51,14 +51,22 @@ body {
 .middle-container {
     border: 1px dotted lightgray;
     padding: 20px;
+
+    display: flex;
+    flex-direction: column;
 }
+.text {
+    display: flex;
+    justify-content: center;
+}
+
 .temp {
     font-size: 64px;
 }
 
 img {
     border-color: 1px dotted white;
-    width: 200px;
-    height: 200px;
+    width: clamp(100px, 30vmin, 1000px);
+    height: clamp(100px, 30vmin, 1000px);
     src: url('assets/sunny.png');
 }
