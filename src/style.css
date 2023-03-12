@@ -55,3 +55,10 @@ body {
 .temp {
     font-size: 64px;
 }
+
+img {
+    border-color: 1px dotted white;
+    width: 200px;
+    height: 200px;
+    src: url('assets/sunny.png');
+}
