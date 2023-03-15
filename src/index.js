@@ -37,6 +37,36 @@ let state = {
     printFeelsLike() {return 'feels like ' + this.feelsLike.toString() + '°F';},
     printClouds() {return 'cloud coverage: ' + this.clouds + '%'},
     printWind() {return 'wind: ' + this.windSpeed + ' mph';},
+
+    update(data) {
+        this.temp = Math.round(Number(data.main.temp));
+        this.feelsLike = Math.round(Number(data.main.feels_like));
+        this.windSpeed = Math.round(data.wind.speed);
+        this.desc = data.weather[0].description;
+        this.city = data.name;
+        this.icon = data.weather[0].icon;
+        console.log('current state updated: ', this);
+
+        this.write();
+    },
+
+    write() {
+        const tempNode = document.querySelector('.temp');
+        const feelsLikeNode = document.querySelector('.feels-like');
+        const windNode = document.querySelector('.wind');
+        const descNode = document.querySelector('.desc');
+        // TODO: re integrate city node
+        // const cityNode = document.querySelector('.city');
+        const imgNode = document.querySelector('img');
+
+        tempNode.textContent = this.printTemp();
+        feelsLikeNode.textContent = this.printFeelsLike();
+        windNode.textContent = this.printWind();
+        descNode.textContent = this.desc;
+        // cityNode.textContent = this.city;
+
+        imgNode.src = getWeatherIcon(this.icon);
+    },
 };
 
 let searchManager = new SearchManager(document.getElementById('header'), state);

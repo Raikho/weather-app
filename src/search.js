@@ -32,12 +32,18 @@ export default class SearchManager {
             let cityName = cityNode.value;
             if (!cityName) return;
 
+            let tempJson = null;
+
             queryCity(cityName)
                 .then(res => {
+                    tempJson = res;
                     console.log('promise furfilled');
+                    this.weatherState.update(res);
                 })
                 .catch(err => {
                     console.log('promise rejected: ', err);
+                    console.log('weatherState: ', this.weatherState);
+                    console.log('json: ', tempJson);
                 });
         });
     }
