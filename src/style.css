@@ -16,6 +16,12 @@ body {
     grid-template-rows: 1fr 9fr;
 }
 
+input {
+    border-radius: 2px;
+    padding: 5px;
+    font-size: 18px;
+}
+
 /* ============================ HEADER ============================= */
 #header {
     border: 1px dotted lightgray;

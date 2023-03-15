@@ -1,5 +1,7 @@
 import './style.css'
 import UrlGen from './urlGen.js'
+import SearchManager from './search.js'
+import DOM from './dom.js'
 
 import cloudyIcon from './assets/cloudy.png'
 import rainIcon from './assets/rain.png'
@@ -18,8 +20,8 @@ const weatherBaseUrl = 'https://api.openweathermap.org/data/2.5/weather';
 let weatherUrl = new UrlGen(weatherBaseUrl);
 weatherUrl.addKey('appid', weatherKey);
 weatherUrl.addKey('units', 'imperial');
-// ========================== SETUP ===================================
 
+// ========================== SETUP ===================================
 let state = {
     city: 'New York City',
     temp: null, // kelvin
@@ -37,18 +39,22 @@ let state = {
     printWind() {return 'wind: ' + this.windSpeed + ' mph';},
 };
 
-document.getElementById('search-button').addEventListener('click', async () => {
-    let cityName = document.getElementById('city-input').value;
-    console.log(`searching for "${cityName}"...`); // DEBUG
-    if (cityName) {
-        await queryCity(cityName);
-    }
-});
+let searchManager = new SearchManager(document.getElementById('header'), state);
+
+
+// ======================== functions =================================
+// document.getElementById('search-button').addEventListener('click', async () => {
+//     let cityName = document.getElementById('city-input').value;
+//     console.log(`searching for "${cityName}"...`); // DEBUG
+//     if (cityName) {
+//         await queryCity(cityName);
+//     }
+// });
 
 async function queryCity(cityName) {
     weatherUrl.addKey('q', cityName);
     try {
-        await new Promise(resolve => setTimeout(resolve, 200)); // DEBUG
+        await new Promise(resolve => setTimeout(resolve, 300)); // DEBUG
         let response = await fetch(weatherUrl.url, {mode: 'cors'});
         if (!response.ok)
             throw new Error(response.statusText);
@@ -113,7 +119,7 @@ function getWeatherIcon(iconCode) {
 }
 
 // =========================== INIT ===================================
-queryCity('New York City');
+// queryCity('New York City');
 
 
 
