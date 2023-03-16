@@ -15,10 +15,7 @@ export default class SearchManager {
 
         DOM.clearNode(this.node);
         this.updateSearchState();
-    }
-
-    updateState(state) {
-        this.state = state;
+        this.updateFoundState();
     }
 
     updateSearchState() {
@@ -39,6 +36,8 @@ export default class SearchManager {
                     tempJson = res;
                     console.log('promise furfilled');
                     this.weatherState.update(res);
+
+                    this.updateFoundState();
                 })
                 .catch(err => {
                     console.log('promise rejected: ', err);
@@ -50,9 +49,11 @@ export default class SearchManager {
 
     updateFoundState() {
         this.state = 'found';
-        const containerNode = DOM.createDiv(this.node, ['city']);
-        const cityNode = DOM.createDiv(containerNode, ['city']);
-        const editNode = DOM.createDiv(containerNode, ['edit']);
+        DOM.clearNode(this.node);
+        const containerNode = DOM.createDiv(this.node, ['city-container']);
+        const cityNode = DOM.createDiv(containerNode, ['city'], this.weatherState.city);
+        const editNode = DOM.createDiv(containerNode, ['edit'], 'edit');
+        const iconNde = DOM.createDiv(containerNode, ['icon', 'edit']);
     }
 }
 

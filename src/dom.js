@@ -28,4 +28,19 @@ DOM.createTextInput = function(parentNode, id, placeholder) {
     return inputNode;
 }
 
+DOM.createImage = function(parentNode, classList, src, alt) {
+    let imageNode = this.createNode(parentNode, 'img', classList);
+    if (src)
+        imageNode.src = src;
+    imageNode.alt = alt;
+    return imageNode;
+}
+
+DOM.createIcon = function(parentNode, classList, src) {
+    let iconNode = this.createNode(parentNode, 'object', classList);
+    iconNode.setAttribute('type', 'image/svg+xml');
+    iconNode.setAttribute('data', src)
+    return iconNode;
+}
+
 export default DOM;
