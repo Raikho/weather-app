@@ -15,24 +15,30 @@ export default class SearchManager {
 
         DOM.clearNode(this.node);
         this.updateSearchState();
-        this.updateFoundState();
+        // this.updateFoundState();
     }
 
     updateSearchState() {
         this.state = 'search';
+        DOM.clearNode(this.node);
+
         const containerNode = DOM.createDiv(this.node, ['city-container']);
-        const cityNode = DOM.createTextInput(containerNode, 'city-input', 'Enter city:');
-        const searchNode = DOM.createDiv(containerNode, ['edit'], 'search');
-        searchNode.id = 'search-button';
+        const inputContainerNode = DOM.createDiv(containerNode, ['input-container']);
+        // const errorNode = DOM.createDiv(inputContainerNode, ['error'], 'error');
+        const inputNode = DOM.createTextInput(inputContainerNode, ['city-input'], 'Enter city:');
+        const searchNode = DOM.createDiv(containerNode, ['icon', 'search']);
+        const cancelNode = DOM.createDiv(containerNode, ['icon', 'cancel']);
 
         searchNode.addEventListener('click', async () => {
-            let cityName = cityNode.value;
+            let cityName = inputNode.value;
             if (!cityName) return;
 
             let tempJson = null;
 
             queryCity(cityName)
                 .then(res => {
+                    if (this.state != 'search') return;
+
                     tempJson = res;
                     console.log('promise furfilled');
                     this.weatherState.update(res);
@@ -45,20 +51,29 @@ export default class SearchManager {
                     console.log('json: ', tempJson);
                 });
         });
+
+        cancelNode.addEventListener('click', this.updateFoundState.bind(this));
+
     }
 
     updateFoundState() {
         this.state = 'found';
         DOM.clearNode(this.node);
+
         const containerNode = DOM.createDiv(this.node, ['city-container']);
         const cityNode = DOM.createDiv(containerNode, ['city'], this.weatherState.city);
-        const editNode = DOM.createDiv(containerNode, ['edit'], 'edit');
-        const iconNde = DOM.createDiv(containerNode, ['icon', 'edit']);
+        const iconNode = DOM.createDiv(containerNode, ['icon', 'edit']);
+
+        iconNode.addEventListener('click', () => {
+            this.updateSearchState();
+        });
     }
 }
 
 async function queryCity(cityName) {
     return new Promise(async (resolve, reject) => {
+        await new Promise(resolve => setTimeout(resolve, 1000)); // DEBUG
+
         weatherUrl.addKey('q', cityName);
         let response = await fetch(weatherUrl.url, {mode: 'cors'});
         if (!response.ok)
