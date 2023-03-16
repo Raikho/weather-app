@@ -1,8 +1,6 @@
 import './style.css'
 import UrlGen from './urlGen.js'
 import SearchManager from './search.js'
-import WeatherState from './weatherState.js';
-import DOM from './dom.js'
 
 import cloudyIcon from './assets/cloudy.png'
 import rainIcon from './assets/rain.png'
@@ -23,10 +21,6 @@ weatherUrl.addKey('appid', weatherKey);
 weatherUrl.addKey('units', 'imperial');
 
 // ========================== SETUP ===================================
-
-let weatherState = new WeatherState();
-console.log('new weatherstate: ', weatherState);
-weatherState.write();
 
 let state = {
     city: 'New York City',
@@ -84,14 +78,6 @@ let searchManager = new SearchManager(document.getElementById('header'), state);
 
 
 // ======================== functions =================================
-// document.getElementById('search-button').addEventListener('click', async () => {
-//     let cityName = document.getElementById('city-input').value;
-//     console.log(`searching for "${cityName}"...`); // DEBUG
-//     if (cityName) {
-//         await queryCity(cityName);
-//     }
-// });
-
 async function queryCity(cityName) {
     weatherUrl.addKey('q', cityName);
     try {
@@ -134,29 +120,6 @@ function writeWeatherState() {
     cityNode.textContent = state.city;
 
     imgNode.src = getWeatherIcon(state.icon);
-}
-
-function getWeatherIcon(iconCode) {
-    switch (iconCode) {
-        case '01d': return sunnyIcon; break;
-        case '01n': return nightIcon; break;
-        case '02d':
-        case '03d':
-        case '02n':
-        case '03n': return partyCloudyIcon; break;
-        case '04d':
-        case '04n':
-        case '50d':
-        case '50n': return cloudyIcon; break;
-        case '09d':
-        case '09n': return showerIcon; break;
-        case '10d':
-        case '10n': return rainIcon; break;
-        case '11d':
-        case '11n': return thunderstormIcon; break;
-        case '13d':
-        case '13n': return snowIcon; break;
-    }
 }
 
 // =========================== INIT ===================================

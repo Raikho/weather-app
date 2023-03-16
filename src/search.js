@@ -7,11 +7,13 @@ let weatherUrl = new UrlGen(weatherBaseUrl);
 weatherUrl.addKey('appid', weatherKey);
 weatherUrl.addKey('units', 'imperial');
 
+import WeatherState from './weatherState.js';
+
 export default class SearchManager {
     constructor(node, weatherState) {
         this.node = node;
         this.state = 'state'; // found, search, retry, loading
-        this.weatherState = weatherState;
+        this.weatherState = new WeatherState();
         this.weatherState.write();
 
         DOM.clearNode(this.node);
@@ -44,7 +46,9 @@ export default class SearchManager {
 
                     tempJson = res;
                     console.log('promise furfilled');
+
                     this.weatherState.update(res);
+                    console.log('new weatherState: ', this.weatherState);
 
                     this.updateFoundState();
                 })
@@ -73,6 +77,8 @@ export default class SearchManager {
         const containerNode = DOM.createDiv(this.node, ['city-container']);
         const cityNode = DOM.createDiv(containerNode, ['city'], this.weatherState.city);
         const iconNode = DOM.createDiv(containerNode, ['icon', 'edit']);
+
+        this.weatherState.write();
 
         iconNode.addEventListener('click', () => {
             this.updateSearchState();
