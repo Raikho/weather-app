@@ -23,9 +23,10 @@ export default class SearchManager {
         DOM.clearNode(this.node);
 
         const containerNode = DOM.createDiv(this.node, ['city-container']);
-        const inputContainerNode = DOM.createDiv(containerNode, ['input-container']);
-        // const errorNode = DOM.createDiv(inputContainerNode, ['error'], 'error');
-        const inputNode = DOM.createTextInput(inputContainerNode, ['city-input'], 'Enter city:');
+
+        const errorNode = DOM.createDiv(containerNode, ['error']);
+
+        const inputNode = DOM.createTextInput(containerNode, ['city-input'], 'Enter city:');
         const searchNode = DOM.createDiv(containerNode, ['icon', 'search']);
         const cancelNode = DOM.createDiv(containerNode, ['icon', 'cancel']);
 
@@ -46,6 +47,9 @@ export default class SearchManager {
                     this.updateFoundState();
                 })
                 .catch(err => {
+                    if (err === 'Not Found')
+                        errorNode.textContent = 'City not found';
+
                     console.log('promise rejected: ', err);
                     console.log('weatherState: ', this.weatherState);
                     console.log('json: ', tempJson);
@@ -72,7 +76,7 @@ export default class SearchManager {
 
 async function queryCity(cityName) {
     return new Promise(async (resolve, reject) => {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // DEBUG
+        await new Promise(resolve => setTimeout(resolve, 300)); // DEBUG
 
         weatherUrl.addKey('q', cityName);
         let response = await fetch(weatherUrl.url, {mode: 'cors'});
