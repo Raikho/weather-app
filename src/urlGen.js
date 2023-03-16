@@ -1,4 +1,4 @@
-export default  class UrlGen {
+export default class UrlGen {
     constructor(baseUrl) {
         this.baseUrl = baseUrl;
         this.keyPairs = [];

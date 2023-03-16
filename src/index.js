@@ -1,6 +1,7 @@
 import './style.css'
 import UrlGen from './urlGen.js'
 import SearchManager from './search.js'
+import WeatherState from './weatherState.js';
 import DOM from './dom.js'
 
 import cloudyIcon from './assets/cloudy.png'
@@ -22,6 +23,11 @@ weatherUrl.addKey('appid', weatherKey);
 weatherUrl.addKey('units', 'imperial');
 
 // ========================== SETUP ===================================
+
+let weatherState = new WeatherState();
+console.log('new weatherstate: ', weatherState);
+weatherState.write();
+
 let state = {
     city: 'New York City',
     temp: null, // kelvin
@@ -29,7 +35,7 @@ let state = {
     windSpeed: null, // meter/sec
     clouds: null, // % coverage
     desc: 'empty',
-    icon: null, // weather icon (01-04,09-11,13,50), (d|n)
+    icon: '01d', // weather icon (01-04,09-11,13,50), (d|n)
     // 1: clear sky, 2: few cloud, 3: scattered clouds, 4: broken clouds,
     // 9: shower rain, 10: rain, 11: thunderstorm, 13: snow, 50: mist;
 
@@ -51,6 +57,7 @@ let state = {
     },
 
     write() {
+
         const tempNode = document.querySelector('.temp');
         const feelsLikeNode = document.querySelector('.feels-like');
         const windNode = document.querySelector('.wind');
@@ -59,13 +66,17 @@ let state = {
         // const cityNode = document.querySelector('.city');
         const imgNode = document.querySelector('img');
 
+        imgNode.src = getWeatherIcon(this.icon);
+
+        if (!this.temp) {
+            return;
+        }
+
         tempNode.textContent = this.printTemp();
         feelsLikeNode.textContent = this.printFeelsLike();
         windNode.textContent = this.printWind();
         descNode.textContent = this.desc;
         // cityNode.textContent = this.city;
-
-        imgNode.src = getWeatherIcon(this.icon);
     },
 };
 

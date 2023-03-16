@@ -12,6 +12,7 @@ export default class SearchManager {
         this.node = node;
         this.state = 'state'; // found, search, retry, loading
         this.weatherState = weatherState;
+        this.weatherState.write();
 
         DOM.clearNode(this.node);
         this.updateSearchState();
