@@ -49,22 +49,25 @@ body {
     align-self: start;
 
     position: absolute;
-    padding-left: 5px;
+    padding-left: 10px;
     padding-top: 2px;
     font-size: 14px;
-    color: #ef4444cc;
+    color: #ef4444aa;
 }
 input {
-    height: 40px;
+    height: 30px;
     border-radius: 5px;
-    padding: 5px;
+    padding: 10px 10px 10px 10px;
     font-size: 18px;
     background-color: var(--iconHover);
 }
+input:invalid {border-color: red;}
+input:focus:invalid {outline-color: red;}
+/* input:invalid {border-: red;} */
 
 
 .city {
-    font-size: 18px;
+    font-size: 24px;
     padding: 5px;
 }
 

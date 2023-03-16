@@ -27,16 +27,17 @@ export default class SearchManager {
         const errorNode = DOM.createDiv(containerNode, ['error']);
 
         const inputNode = DOM.createTextInput(containerNode, ['city-input'], 'Enter city:');
-        const searchNode = DOM.createDiv(containerNode, ['icon', 'search']);
+        inputNode.setAttribute('pattern', "[a-zA-Z ']+$");
+        const iconNode = DOM.createDiv(containerNode, ['icon', 'search']);
         const cancelNode = DOM.createDiv(containerNode, ['icon', 'cancel']);
 
-        searchNode.addEventListener('click', async () => {
+        iconNode.addEventListener('click', async () => {
             let cityName = inputNode.value;
             if (!cityName) return;
 
             let tempJson = null;
 
-            queryCity(cityName)
+            Promise.race([queryCity(cityName, iconNode)])
                 .then(res => {
                     if (this.state != 'search') return;
 
@@ -49,14 +50,18 @@ export default class SearchManager {
                 .catch(err => {
                     if (err === 'Not Found')
                         errorNode.textContent = 'City not found';
+                    else
+                        errorNode.textContent = err;
 
                     console.log('promise rejected: ', err);
-                    console.log('weatherState: ', this.weatherState);
-                    console.log('json: ', tempJson);
+                })
+                .finally(() => {
+                    if (this.state !='search') return;
+                    iconNode.classList.replace('loading', 'search');
                 });
         });
 
-        cancelNode.addEventListener('click', this.updateFoundState.bind(this));
+        cancelNode.addEventListener('click', this.updateFoundState.bind(this), {once: true});
 
     }
 
@@ -74,14 +79,16 @@ export default class SearchManager {
     }
 }
 
-async function queryCity(cityName) {
+async function queryCity(cityName, iconNode) {
     return new Promise(async (resolve, reject) => {
-        await new Promise(resolve => setTimeout(resolve, 300)); // DEBUG
+        iconNode.classList.replace('search', 'loading');
 
+        await new Promise(resolve => setTimeout(resolve, 300)); // DEBUG
         weatherUrl.addKey('q', cityName);
         let response = await fetch(weatherUrl.url, {mode: 'cors'});
         if (!response.ok)
             reject(response.statusText);
+
         let json = await response.json();
         if (json.cod != '200')
             reject(json.cod);
