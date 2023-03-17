@@ -2,6 +2,7 @@
     --bg: #164e63;
     --bgLighter: #155e75;
     --fg: #f0f9ff;
+    --fgAlpha: #f0f9ff55;
 
     --icon: #bfdbfe;
     --iconHover: #e0f2fe;
@@ -19,7 +20,7 @@ body {
     font-size: 18px;
 
     display: grid;
-    grid-template-rows: 1fr 5fr;
+    grid-template-rows: 1fr 5fr 0.25fr;
 }
 
 /* ============================ HEADER ============================= */
@@ -144,3 +145,21 @@ img.empty {
     -webkit-mask-image: url('assets/loading.svg');
     mask-image: url('assets/loading.svg');
 }
+
+/* ============================ FOOTER ============================= */
+
+#footer {
+    background-color: var(--bgLighter);
+    box-shadow: 0px -5px 10px #0003;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+a {
+    font-size: 12px;
+    color: var(--fgAlpha);
+    text-decoration: none;
+}
+
