@@ -43,7 +43,7 @@ export default class WeatherState {
             update: function(data) {this.value = data.weather[0].description},
             write: function() {
                 if (!this.value){
-                    this.node.textContent = 'loading weather...';
+                    this.node.textContent = 'No location set...';
                     return;
                 }
                 this.node.textContent = this.value;
@@ -62,7 +62,14 @@ export default class WeatherState {
             value: '',
             node: document.querySelector('img'),
             update: function(data) {this.value = data.weather[0].icon},
-            write: function() {this.node.src = getWeatherIcon(this.value)},
+            write: function() {
+                if (this.value) {
+                    this.node.classList.remove('empty');
+                    this.node.src = getWeatherIcon(this.value)
+                } else {
+                    this.node.classList.add('empty');
+                }
+            },
         };
     }
     update(data) {
@@ -95,6 +102,6 @@ function getWeatherIcon(iconCode) {
         case '11n': return thunderstormIcon; break;
         case '13d':
         case '13n': return snowIcon; break;
-        default: return loadingIcon; break;
+        // default: return loadingIcon; break;
     }
 }
