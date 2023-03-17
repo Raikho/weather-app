@@ -133,7 +133,7 @@ input:focus:invalid {outline-color: red;}
 
 img {
     margin-bottom: 40px;
-    border-color: 1px dotted white;
+    /* border-color: 1px dotted white; */
     width: clamp(100px, 30vmin, 1000px);
     height: clamp(100px, 30vmin, 1000px);
 }

@@ -2,10 +2,16 @@ import DOM from './dom.js'
 
 import UrlGen from './urlGen.js';
 const weatherKey = 'bba6f56f2dcd34db5581285bb884ee36';
-const weatherBaseUrl = 'https://api.openweathermap.org/data/2.5/weather';
-let weatherUrl = new UrlGen(weatherBaseUrl);
-weatherUrl.addKey('appid', weatherKey);
-weatherUrl.addKey('units', 'imperial');
+const weatherDataBaseUrl = 'https://api.openweathermap.org/data/2.5/weather';
+const weatherGeoBaseUrl = 'http://api.openweathermap.org/geo/1.0/direct';
+
+let weatherDataUrl = new UrlGen(weatherDataBaseUrl);
+weatherDataUrl.addKey('appid', weatherKey);
+weatherDataUrl.addKey('units', 'imperial');
+
+let weatherGeoUrl = new UrlGen(weatherGeoBaseUrl);
+weatherGeoUrl.addKey('appid', weatherKey);
+
 
 import WeatherState from './weatherState.js';
 
@@ -37,7 +43,7 @@ export default class SearchManager {
         iconNode.addEventListener('click', async () => {
             let cityName = inputNode.value;
             if (!cityName) return;
-            let tempJson = null;
+            iconNode.classList.replace('search', 'loading');
 
             let queryPromise = queryCity(cityName, iconNode);
             let timeoutPromise = new Promise((_, reject) => {
@@ -87,19 +93,35 @@ export default class SearchManager {
     }
 }
 
-async function queryCity(cityName, iconNode) {
+async function queryCity(cityName) {
     return new Promise(async (resolve, reject) => {
-        iconNode.classList.replace('search', 'loading');
+        weatherGeoUrl.addKey('q', cityName);
 
-        await new Promise(resolve => setTimeout(resolve, 500)); // DEBUG
-        weatherUrl.addKey('q', cityName);
-        let response = await fetch(weatherUrl.url, {mode: 'cors'});
+        let geoResponse = await fetch(weatherGeoUrl.url, {mode: 'cors'});
+        if (!geoResponse.ok) {
+            reject('geocoding error 1: ' + geoResponse.statusText);
+            return;
+        }
+
+        let geoData = await geoResponse.json();
+        if (!geoData[0]) {
+            reject('Not Found');
+            return;
+        }
+
+        let lat = geoData[0].lat;
+        let lon = geoData[0].lon;
+        console.log(`Geo data received, lat: ${lat}, lon: ${lon}, array: `, geoData); // DEBUG
+
+        weatherDataUrl.addKey('lat', lat);
+        weatherDataUrl.addKey('lon', lon);
+        let response = await fetch(weatherDataUrl.url, {mode: 'cors'});
         if (!response.ok)
             reject(response.statusText);
 
-        let json = await response.json();
-        if (json.cod != '200')
-            reject(json.cod);
-        resolve(json);
+        let weatherData = await response.json();
+        if (weatherData.cod != '200')
+            reject(weatherData.cod);
+        resolve(weatherData);
     });
 }
