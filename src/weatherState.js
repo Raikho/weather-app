@@ -6,6 +6,7 @@ import sunnyIcon from './assets/sunny.png'
 import thunderstormIcon from './assets/thunderstorm.png'
 import nightIcon from './assets/night.png'
 import partyCloudyIcon from './assets/partyCloudy.png'
+import loadingIcon from './assets/loading.svg'
 
 export default class WeatherState {
     constructor() {
@@ -42,14 +43,14 @@ export default class WeatherState {
             update: function(data) {this.value = data.weather[0].description},
             write: function() {
                 if (!this.value){
-                    this.node.textContent = 'loading weather2...';
+                    this.node.textContent = 'loading weather...';
                     return;
                 }
                 this.node.textContent = this.value;
             },
         };
         this.city = {
-            value: '(No city selected)',
+            value: 'Enter a city:',
             node: document.querySelector('.city'),
             update: function(data) {this.value = data.name},
             write: function() {
@@ -58,7 +59,7 @@ export default class WeatherState {
             },
         };
         this.icon = {
-            value: '01d',
+            value: '',
             node: document.querySelector('img'),
             update: function(data) {this.value = data.weather[0].icon},
             write: function() {this.node.src = getWeatherIcon(this.value)},
@@ -94,5 +95,6 @@ function getWeatherIcon(iconCode) {
         case '11n': return thunderstormIcon; break;
         case '13d':
         case '13n': return snowIcon; break;
+        default: return loadingIcon; break;
     }
 }

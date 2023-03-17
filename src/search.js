@@ -17,8 +17,8 @@ export default class SearchManager {
         this.weatherState.write();
 
         DOM.clearNode(this.node);
-        this.updateSearchState();
-        // this.updateFoundState();
+        this.updateFoundState();
+        // this.updateSearchState();
     }
 
     updateSearchState() {
@@ -33,40 +33,42 @@ export default class SearchManager {
         inputNode.setAttribute('pattern', "[a-zA-Z ']+$");
         const iconNode = DOM.createDiv(containerNode, ['icon', 'search']);
         const cancelNode = DOM.createDiv(containerNode, ['icon', 'cancel']);
+        cancelNode.addEventListener('click', this.updateFoundState.bind(this), {once: true});
 
         iconNode.addEventListener('click', async () => {
             let cityName = inputNode.value;
             if (!cityName) return;
-
             let tempJson = null;
 
-            Promise.race([queryCity(cityName, iconNode)])
-                .then(res => {
-                    if (this.state != 'search') return;
+            let queryPromise = queryCity(cityName, iconNode);
+            let timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => reject('timeout'), 1200);
+            });
+            let cancelPromise = new Promise((_, reject) => {
+                cancelNode.addEventListener('click', () => reject('cancel'), {once: true});
+            });
 
-                    tempJson = res;
-                    console.log('promise furfilled');
+            try {
+                const result = await Promise.race([queryPromise, timeoutPromise, cancelPromise]);
+                console.log('race resolved, result: ', result); // DEBUG
 
-                    this.weatherState.update(res);
-                    console.log('new weatherState: ', this.weatherState);
+                if (this.state !='search') return;
 
-                    this.updateFoundState();
-                })
-                .catch(err => {
-                    if (err === 'Not Found')
-                        errorNode.textContent = 'City not found';
-                    else
-                        errorNode.textContent = err;
+                this.weatherState.update(result);
+                console.log('new weather state: ', this.weatherState); // DEBUG
+                this.updateFoundState();
+            } catch(err) {
+                console.log('race error: ', err);
 
-                    console.log('promise rejected: ', err);
-                })
-                .finally(() => {
-                    if (this.state !='search') return;
-                    iconNode.classList.replace('loading', 'search');
-                });
+                if (err === 'timeout')
+                    errorNode.textContent = 'No response, try again later';
+                else if (err === 'Not Found')
+                    errorNode.textContent = 'City not found';
+
+                iconNode.classList.replace('loading', 'search');
+            }
         });
 
-        cancelNode.addEventListener('click', this.updateFoundState.bind(this), {once: true});
 
     }
 
@@ -90,7 +92,7 @@ async function queryCity(cityName, iconNode) {
     return new Promise(async (resolve, reject) => {
         iconNode.classList.replace('search', 'loading');
 
-        await new Promise(resolve => setTimeout(resolve, 300)); // DEBUG
+        await new Promise(resolve => setTimeout(resolve, 500)); // DEBUG
         weatherUrl.addKey('q', cityName);
         let response = await fetch(weatherUrl.url, {mode: 'cors'});
         if (!response.ok)

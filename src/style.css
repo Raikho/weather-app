@@ -106,7 +106,7 @@ input:focus:invalid {outline-color: red;}
 }
 
 .middle-container {
-    border: 1px dotted lightgray;
+    /* border: 1px dotted lightgray; */
     padding: 20px;
 
     display: flex;
@@ -121,9 +121,10 @@ input:focus:invalid {outline-color: red;}
     font-size: 64px;
 }
 
-#main>img {
+img {
+    margin-bottom: 40px;
     border-color: 1px dotted white;
     width: clamp(100px, 30vmin, 1000px);
     height: clamp(100px, 30vmin, 1000px);
-    src: url('assets/sunny.png');
+    src: url('assets/loading.svg');
 }
