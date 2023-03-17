@@ -78,7 +78,7 @@ export default class SearchManager {
 
         const containerNode = DOM.createDiv(this.node, ['city-container']);
         const cityNode = DOM.createDiv(containerNode, ['city'], this.weatherState.city);
-        const iconNode = DOM.createDiv(containerNode, ['icon', 'edit']);
+        const iconNode = DOM.createDiv(containerNode, ['icon', 'edit']); // DEBUG, change back to edit
 
         this.weatherState.write();
 

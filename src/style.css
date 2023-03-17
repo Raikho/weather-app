@@ -93,7 +93,14 @@ input:focus:invalid {outline-color: red;}
 .icon.loading {
     -webkit-mask-image: url('assets/loading.svg');
     mask-image: url('assets/loading.svg');
+
+    animation: spin 2s linear 0s infinite normal;
 }
+@keyframes spin {
+    0% {transform: rotate(0deg);}
+    100% {transform: rotate(360deg);}
+}
+
 .icon:hover {background-color: var(--iconHover);}
 .icon:active {background-color: var(--iconActive);}
 
