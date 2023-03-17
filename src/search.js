@@ -18,7 +18,6 @@ export default class SearchManager {
 
         DOM.clearNode(this.node);
         this.updateFoundState();
-        // this.updateSearchState();
     }
 
     updateSearchState() {
