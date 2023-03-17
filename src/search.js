@@ -3,7 +3,8 @@ import DOM from './dom.js'
 import UrlGen from './urlGen.js';
 const weatherKey = 'bba6f56f2dcd34db5581285bb884ee36';
 const weatherDataBaseUrl = 'https://api.openweathermap.org/data/2.5/weather';
-const weatherGeoBaseUrl = 'http://api.openweathermap.org/geo/1.0/direct';
+const weatherGeoBaseUrl = 'https://api.openweathermap.org/geo/1.0/direct';
+const weatherForecastBaseUrl = 'https://api.openweathermap.org/data/2.5/forecast';
 
 let weatherDataUrl = new UrlGen(weatherDataBaseUrl);
 weatherDataUrl.addKey('appid', weatherKey);
@@ -11,6 +12,10 @@ weatherDataUrl.addKey('units', 'imperial');
 
 let weatherGeoUrl = new UrlGen(weatherGeoBaseUrl);
 weatherGeoUrl.addKey('appid', weatherKey);
+
+let weatherForecastUrl = new UrlGen(weatherForecastBaseUrl);
+weatherForecastUrl.addKey('appid', weatherKey);
+weatherForecastUrl.addKey('units', 'imperial');
 
 
 import WeatherState from './weatherState.js';
@@ -96,7 +101,6 @@ export default class SearchManager {
 async function queryCity(cityName) {
     return new Promise(async (resolve, reject) => {
         weatherGeoUrl.addKey('q', cityName);
-
         let geoResponse = await fetch(weatherGeoUrl.url, {mode: 'cors'});
         if (!geoResponse.ok)
             return reject('geocoding error 1: ' + geoResponse.statusText);
@@ -108,7 +112,6 @@ async function queryCity(cityName) {
 
         weatherDataUrl.addKey('lat', geoData[0].lat);
         weatherDataUrl.addKey('lon', geoData[0].lon);
-
         let response = await fetch(weatherDataUrl.url, {mode: 'cors'});
         if (!response.ok)
             return reject(response.statusText);
@@ -117,6 +120,17 @@ async function queryCity(cityName) {
         if (weatherData.cod != '200')
             return reject(weatherData.cod);
 
-        resolve({geo: geoData[0], weather: weatherData});
+        weatherForecastUrl.addKey('lat', geoData[0].lat);
+        weatherForecastUrl.addKey('lon', geoData[0].lon);
+        let forecastResponse = await fetch (weatherForecastUrl.url, {mode: 'cors'});
+        if (!forecastResponse.ok)
+            return reject(forecastResponse.cod);
+
+        let forecastData = await forecastResponse.json();
+        console.log('forecast data: ', forecastData);
+        if (forecastData.cod != '200')
+            return reject(forecastData.cod);
+
+        resolve({geo: geoData[0], weather: weatherData, forecast: forecastData});
     });
 }
