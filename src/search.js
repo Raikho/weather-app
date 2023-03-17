@@ -54,12 +54,12 @@ export default class SearchManager {
             });
 
             try {
-                const result = await Promise.race([queryPromise, timeoutPromise, cancelPromise]);
-                console.log('race resolved, result: ', result); // DEBUG
+                const data = await Promise.race([queryPromise, timeoutPromise, cancelPromise]);
+                console.log('race resolved, data result: ', data); // DEBUG
 
                 if (this.state !='search') return;
 
-                this.weatherState.update(result);
+                this.weatherState.update(data.weather, data.geo);
                 console.log('new weather state: ', this.weatherState); // DEBUG
                 this.updateFoundState();
             } catch(err) {
@@ -98,30 +98,25 @@ async function queryCity(cityName) {
         weatherGeoUrl.addKey('q', cityName);
 
         let geoResponse = await fetch(weatherGeoUrl.url, {mode: 'cors'});
-        if (!geoResponse.ok) {
-            reject('geocoding error 1: ' + geoResponse.statusText);
-            return;
-        }
+        if (!geoResponse.ok)
+            return reject('geocoding error 1: ' + geoResponse.statusText);
 
         let geoData = await geoResponse.json();
-        if (!geoData[0]) {
-            reject('Not Found');
-            return;
-        }
+        if (!geoData[0])
+            return reject('Not Found');
+        console.log(`Geo data received, lat: ${geoData[0].lat}, lon: ${geoData[0].lon}, array: `, geoData); // DEBUG
 
-        let lat = geoData[0].lat;
-        let lon = geoData[0].lon;
-        console.log(`Geo data received, lat: ${lat}, lon: ${lon}, array: `, geoData); // DEBUG
+        weatherDataUrl.addKey('lat', geoData[0].lat);
+        weatherDataUrl.addKey('lon', geoData[0].lon);
 
-        weatherDataUrl.addKey('lat', lat);
-        weatherDataUrl.addKey('lon', lon);
         let response = await fetch(weatherDataUrl.url, {mode: 'cors'});
         if (!response.ok)
-            reject(response.statusText);
+            return reject(response.statusText);
 
         let weatherData = await response.json();
         if (weatherData.cod != '200')
-            reject(weatherData.cod);
-        resolve(weatherData);
+            return reject(weatherData.cod);
+
+        resolve({geo: geoData[0], weather: weatherData});
     });
 }

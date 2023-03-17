@@ -52,7 +52,17 @@ export default class WeatherState {
         this.city = {
             value: 'Enter a city:',
             node: document.querySelector('.city'),
-            update: function(data) {this.value = data.name},
+            update: function(_, geoData) {
+                console.log('geodata: ', geoData); // DEBUG
+                let state = geoData.state;
+                let country = geoData.country;
+                let city = geoData.name;
+
+                if (country === 'US' && state)
+                    this.value = `${city}, ${state}`;
+                else if (country != 'US')
+                    this.value = `${city}, ${country}`;
+            },
             write: function() {
                 this.node = document.querySelector('.city');
                 this.node.textContent = this.value;
@@ -72,9 +82,9 @@ export default class WeatherState {
             },
         };
     }
-    update(data) {
+    update(weatherData, geoData) {
         for (let prop in this)
-            this[prop].update(data);
+            this[prop].update(weatherData, geoData);
     }
     write() {
         for (let prop in this)
